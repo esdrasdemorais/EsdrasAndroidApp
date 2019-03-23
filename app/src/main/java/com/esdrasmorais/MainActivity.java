@@ -1,5 +1,8 @@
 package com.esdrasmorais;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -97,5 +100,27 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void navigate(View view) {
+        try {
+            // Assume that Moovit app exists. If not, exception will occur
+            PackageManager pm = getApplicationContext().getPackageManager();
+            pm.getPackageInfo("com.tranzmate", PackageManager.GET_ACTIVITIES);
+
+            // Launch app call - scheme (with parameters)
+            String uri = "moovit://directions?dest_lat=-23.4153007&dest_lon=-46.5101817&" +
+                "dest_name=Home&orig_lat=-23.4719215&orig_lon=-46.5329815&orig_name=Office&date=" +
+                "&partner_id=esdras&auto_run=true";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(uri));
+            startActivity(intent);
+        } catch (PackageManager.NameNotFoundException e) {
+            // Moovit not installed - send to store
+            String url = "http://app.appsflyer.com/com.tranzmate?pid=DL&c=esdras";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        }
     }
 }
